@@ -2,7 +2,6 @@ package com.programmingbros.androidgsonapi;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -26,8 +25,6 @@ public class JsonTask extends AsyncTask<String, Integer, Object> {
     private String type;
     private View[] views;
 
-    public JsonTask() {
-    }
     public JsonTask(View... views) {
         this.views = views;
     }
@@ -52,44 +49,29 @@ public class JsonTask extends AsyncTask<String, Integer, Object> {
         if (this.type.equals("query")){
             String data = httpClient.queryMovie(content);
 
-//            Log.v("RAFA", "oii " + data);
             Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
             MovieGson movieGson = gson.fromJson(data, MovieGson.class);
 
+            short i = 0;
             for (Movie movie: movieGson.movies) {
+                publishProgress((++i * 100) / movieGson.movies.size());
                 movie.setPosterBits();
             }
 
-            /*Log.v("RAFA", ":: " + movieGson.response + " | : " + movieGson.totalResults);
-            Log.v("RAFA", "array :: " + movieGson.movies);*/
-
-            /*JsonObject jsonObject = JsonObject.readFrom(data);
-
-            short i = 0;
-            List<Movie> movies = new ArrayList<>();
-            for (JsonValue item : jsonObject.get("Search").asArray()) {
-                publishProgress((++i * 100) / jsonObject.get("Search").asArray().size());
-
-                JsonObject movieObject = item.asObject();
-
-                movies.add(new Movie(movieObject.get("Title").asString(),
-                        movieObject.get("Year").asString(),
-                        movieObject.get("imdbID").asString(),
-                        movieObject.get("Poster").asString()));
-            }
-            return movies;*/
-            return null;
+            return movieGson.movies;
         } else if (this.type.equals("details")) {
             String data = httpClient.getMovieDetails(content);
-            /*JsonObject jsonObject = JsonObject.readFrom(data);
 
             publishProgress(25);
 
-            Movie movie = new Movie(jsonObject.get("Title").asString(), jsonObject.get("Plot").asString(), jsonObject.get("Year").asString(), content, jsonObject.get("Poster").asString());
+            Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
+            Movie movieGson = gson.fromJson(data, Movie.class);
+
+            movieGson.setPosterBits();
 
             publishProgress(100);
-            return movie;*/
-            return null;
+
+            return movieGson;
         }
         return null;
     }
@@ -98,7 +80,7 @@ public class JsonTask extends AsyncTask<String, Integer, Object> {
     protected void onPostExecute(Object obj) {
         super.onPostExecute(obj);
         if (this.type.equals("query")) {
-            //((RecyclerView)this.views[1]).setAdapter(new MoviesAdapter((ArrayList<Movie>) obj));
+            ((RecyclerView)this.views[1]).setAdapter(new MoviesAdapter((ArrayList<Movie>) obj));
         } else if (this.type.equals("details")) {
             Movie movie = (Movie) obj;
             Bitmap poster = movie.getPoster();
