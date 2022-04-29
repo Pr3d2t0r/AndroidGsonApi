@@ -19,18 +19,6 @@ public class Movie {
     private String imdbId;
     private Bitmap posterBits;
 
-    /*public Movie(String title, String plot, String year, String imdbId, String posterUrl) {
-        this(title, year, imdbId, posterUrl);
-        this.plot = plot;
-    }
-
-    public Movie(String title, String year, String imdbId, String posterUrl) {
-        this.title = title;
-        this.year = year;
-        this.imdbId = imdbId;
-        this.setPoster(posterUrl != null && !posterUrl.isEmpty() ? posterUrl : DEFAULT_IMG);
-    }*/
-
     public String getImdbId() {
         return imdbId;
     }

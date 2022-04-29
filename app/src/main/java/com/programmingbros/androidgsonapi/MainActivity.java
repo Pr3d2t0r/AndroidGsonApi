@@ -9,9 +9,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText queryView;
+    private TextView errorView;
     private Button button;
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         this.queryView = (EditText) findViewById(R.id.query);
+        this.errorView = (TextView) findViewById(R.id.errorView);
         this.button = (Button) findViewById(R.id.queryBtn);
 
         this.button.setOnClickListener(this);
@@ -42,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (query.isEmpty())
             return;
 
-        JsonTask jt = new JsonTask(this.progressBar, this.recyclerView);
+        JsonTask jt = new JsonTask(this.progressBar, this.recyclerView, this.errorView);
         jt.execute("query", query);
     }
 }

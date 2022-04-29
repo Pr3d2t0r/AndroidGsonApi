@@ -12,4 +12,13 @@ public class MovieGson {
 
     @SerializedName(value = "Search", alternate = {"search"})
     public List<Movie> movies;
+
+    @Override
+    public String toString() {
+        return "MovieGson{" +
+                "response='" + response + '\'' +
+                ", totalResults='" + totalResults + '\'' +
+                ", movies=" + movies +
+                '}';
+    }
 }

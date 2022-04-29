@@ -2,6 +2,7 @@ package com.programmingbros.androidgsonapi;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -51,6 +52,8 @@ public class JsonTask extends AsyncTask<String, Integer, Object> {
 
             Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
             MovieGson movieGson = gson.fromJson(data, MovieGson.class);
+            if (movieGson.response.equals("False"))
+                return null;
 
             short i = 0;
             for (Movie movie: movieGson.movies) {
@@ -79,7 +82,14 @@ public class JsonTask extends AsyncTask<String, Integer, Object> {
     @Override
     protected void onPostExecute(Object obj) {
         super.onPostExecute(obj);
+        if (obj == null) {
+            ((TextView) this.views[2]).setText("Filme não encontrado.");
+            ((RecyclerView)this.views[1]).setAdapter(new MoviesAdapter(new ArrayList<Movie>()));
+            return;
+        }
+
         if (this.type.equals("query")) {
+            ((TextView) this.views[2]).setText("");
             ((RecyclerView)this.views[1]).setAdapter(new MoviesAdapter((ArrayList<Movie>) obj));
         } else if (this.type.equals("details")) {
             Movie movie = (Movie) obj;
